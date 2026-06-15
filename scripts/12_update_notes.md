@@ -44,6 +44,11 @@ Step 1.2 — populates degradation **notes** on `public.image` from
 
 Grades are in `[0, 1]` (1 = perfect); the products fall as degradations appear.
 
+4. Adds **`measure_width`** (double precision) and fills it from
+   `public.road_data` rows where `classe = 'Largeur'`, matched on
+   `image.id = road_data.image_id` and averaged per image (a few images carry
+   several width measurements).
+
 ---
 
 ## Usage
@@ -69,6 +74,8 @@ Runs in a single transaction.
   its column, the rest 1.0; `Note_Structure = 0.97^0.1 = 0.997`,
   `Note_Surface = 0.69^0.1·0.88^0.1·0.96^0.8·0.98^0.8 = 0.906` (hand-checked).
 - The 172 images with no `image_grade` row → all notes 1.0.
+- `measure_width` set on 11,136 images (range ≈ 1.8–25.5 m); images with no
+  `Largeur` row stay `NULL`.
 
 ---
 

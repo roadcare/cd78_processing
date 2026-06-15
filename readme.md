@@ -23,8 +23,10 @@ for a template.
 | `scripts/03_take_most_recent_segment.py` | De-overlap a layer keeping the most recent segment → `<table>_most_recent` table with an `is_overlapping` flag. | [03_take_most_recent_segment.md](scripts/03_take_most_recent_segment.md) |
 | `scripts/04_make_finest_overlay.py` | Finest linear-referencing overlay of ≥2 layers → one row per `(axe, cumuld, cumulf, value₁, value₂, …)` composition. | [04_make_finest_overlay.md](scripts/04_make_finest_overlay.md) |
 | `scripts/05_build_troncon.py` | Decompose the overlay into individual M-calibrated `LineStringM` troncons → `client.troncon_client` (`id_tronc` PK, SRID 2154). | [05_build_troncon.md](scripts/05_build_troncon.md) |
+| `scripts/06_generate_pas.py` | Generate fixed-step (50 m / 100 m) segments on the itinerary roads → `client.pas_50` / `client.pas_100` (line + width-buffer polygon). | [06_generate_pas.md](scripts/06_generate_pas.md) |
 | `scripts/11_map_matching.py` | Map-match `public.image` points onto `client.troncon_client` → sets `id_tronc`, `axe`, `cumuld`, projection geometry. | [11_map_matching.md](scripts/11_map_matching.md) |
 | `scripts/12_update_notes.py` | Populate 26 `Note_*` degradation columns on `public.image` from `image_grade`, then compute `Note_Structure` / `Note_Surface`. | [12_update_notes.md](scripts/12_update_notes.md) |
+| `scripts/31_export_rendu.py` | Export rendu layers to GeoJSON (4326), an Excel workbook (`pas_50`/`pas_100`), and a self-contained Leaflet `index.html` viewer. | [31_export_rendu.md](scripts/31_export_rendu.md) |
 
 ## Key files
 
@@ -53,4 +55,7 @@ python scripts/04_make_finest_overlay.py \
 
 # Decompose the overlay into M-calibrated troncons (client.troncon_client)
 python scripts/05_build_troncon.py
+
+# Export rendu layers (GeoJSON + Excel + Leaflet viewer) to D:\Tmp\cd78_exports
+python scripts/31_export_rendu.py
 ```

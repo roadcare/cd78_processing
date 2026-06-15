@@ -14,6 +14,13 @@ Rules
 - ``Note_Structure`` and ``Note_Surface`` are the product of
   ``power(Note_x, exponent)`` over the columns/exponents below (the task's
   ``**`` is SQL ``power()``).
+- ``measure_width`` (double precision) is added and filled from
+  ``public.road_data`` rows of ``classe = 'Largeur'`` (averaged per image, since
+  a few images carry several width measurements), matched on
+  ``image.id = road_data.image_id``.
+- ``note_globale`` (numeric) is added and filled from
+  ``image_grade."aggregateGrade"`` (matched on ``image.id =
+  image_grade."imageId"::uuid``); null ⇒ 1.0.
 
 Usage
 -----
@@ -163,8 +170,45 @@ def build_statements() -> dict[str, list[sql.Composed] | sql.Composed]:
              st=sql.Identifier("Note_Structure"), sexpr=product(STRUCTURE),
              su=sql.Identifier("Note_Surface"), uexpr=product(SURFACE))
 
+    # measure_width: copied from road_data rows of classe 'Largeur', averaged
+    # per image (a handful of images carry several Largeur measurements).
+    add_width = sql.SQL(
+        "ALTER TABLE {img} ADD COLUMN IF NOT EXISTS measure_width double precision"
+    ).format(img=img)
+    update_width = sql.SQL(
+        """
+        UPDATE {img} t1 SET measure_width = s.w
+        FROM (
+            SELECT image_id, avg(measure_width) AS w
+            FROM public.road_data
+            WHERE classe = 'Largeur' AND image_id IS NOT NULL
+            GROUP BY image_id
+        ) s
+        WHERE t1.id = s.image_id
+        """
+    ).format(img=img)
+
+    # note_globale: the image_grade aggregate grade (null ⇒ 1.0), matched on
+    # image.id = image_grade."imageId"::uuid.
+    add_globale = sql.SQL(
+        "ALTER TABLE {img} ADD COLUMN IF NOT EXISTS note_globale numeric"
+    ).format(img=img)
+    update_globale = sql.SQL(
+        """
+        UPDATE {img} t1 SET note_globale = COALESCE(s.ag, 1.0)
+        FROM (
+            SELECT i.id, g."aggregateGrade" AS ag
+            FROM {img} i
+            LEFT JOIN {grade} g ON i.id = g."imageId"::uuid
+        ) s
+        WHERE t1.id = s.id
+        """
+    ).format(img=img, grade=grade)
+
     return {"add_notes": add_notes, "update_notes": update_notes,
-            "add_composite": add_composite, "update_composite": update_composite}
+            "add_composite": add_composite, "update_composite": update_composite,
+            "add_width": add_width, "update_width": update_width,
+            "add_globale": add_globale, "update_globale": update_globale}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -193,6 +237,14 @@ def main(argv: list[str] | None = None) -> int:
                     print("\n" + s.as_string(cur) + ";", file=sys.stderr)
                 print("\n" + stmts["update_composite"].as_string(cur) + ";",
                       file=sys.stderr)
+                print("\n" + stmts["add_width"].as_string(cur) + ";",
+                      file=sys.stderr)
+                print("\n" + stmts["update_width"].as_string(cur) + ";",
+                      file=sys.stderr)
+                print("\n" + stmts["add_globale"].as_string(cur) + ";",
+                      file=sys.stderr)
+                print("\n" + stmts["update_globale"].as_string(cur) + ";",
+                      file=sys.stderr)
             conn.rollback()
             return 0
 
@@ -205,9 +257,17 @@ def main(argv: list[str] | None = None) -> int:
                 cur.execute(s)
             cur.execute(stmts["update_composite"])
             n_comp = cur.rowcount
+            cur.execute(stmts["add_width"])
+            cur.execute(stmts["update_width"])
+            n_width = cur.rowcount
+            cur.execute(stmts["add_globale"])
+            cur.execute(stmts["update_globale"])
+            n_glob = cur.rowcount
         conn.commit()
         print(f"  Note_* columns updated: {n_notes} images", file=sys.stderr)
         print(f"  Note_Structure/Surface: {n_comp} images", file=sys.stderr)
+        print(f"  measure_width updated:  {n_width} images", file=sys.stderr)
+        print(f"  note_globale updated:   {n_glob} images", file=sys.stderr)
         print("Done.", file=sys.stderr)
     finally:
         conn.close()

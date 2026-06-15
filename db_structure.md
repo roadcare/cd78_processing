@@ -1,6 +1,6 @@
 # Database structure — `cd78_v2026`
 
-_Generated 2026-06-15 18:18:16 from `localhost:5433` (user `postgres`)._
+_Generated 2026-06-15 23:23:50 from `localhost:5433` (user `postgres`)._
 
 - PostgreSQL: `PostgreSQL 17.6 on x86_64-windows, compiled by msvc-19.44.35213, 64-bit`
 - Schemas inspected: `client`, `public`, `rendu`
@@ -14,7 +14,7 @@ _Add a description of the database and its use case in_ `db_descriptions.yaml` _
 
 | Schema | Exists | Tables |
 |---|:---:|---:|
-| `client` | YES | 6 |
+| `client` | YES | 7 |
 | `public` | YES | 3 |
 | `rendu` | NO | 0 |
 
@@ -34,6 +34,7 @@ _Add a description of the database and its use case in_ `db_descriptions.yaml` _
 | [`20260227_couche_roulement_most_recent`](#tbl-client-20260227_couche_roulement_most_recent) | 2,005 | 2.7 MB |  |
 | [`20260301_trafic_couche_roulement_intersection`](#tbl-client-20260301_trafic_couche_roulement_intersection) | 1,635 | 2.8 MB |  |
 | [`itineraires_v2`](#tbl-client-itineraires_v2) | -1 | 136.0 KB |  |
+| [`troncon_client`](#tbl-client-troncon_client) | 2,064 | 3.1 MB |  |
 
 ### `client.20250916_trafic` <a id="tbl-client-20250916_trafic"></a>
 
@@ -274,19 +275,52 @@ _Add a description of the database and its use case in_ `db_descriptions.yaml` _
 |---|:---:|:---:|---|
 | `itineraires_v2_pkey` | YES | YES | `CREATE UNIQUE INDEX itineraires_v2_pkey ON client.itineraires_v2 USING btree (id)` |
 
+### `client.troncon_client` <a id="tbl-client-troncon_client"></a>
+
+**Description:** _(add via db_descriptions.yaml)_
+
+- Row estimate: **2,064**  - Size: **3.1 MB**
+
+**Columns**
+
+| # | Column | Type | Nullable | Default | PK | Description |
+|---:|---|---|:---:|---|:---:|---|
+| 1 | `id_tronc` | `bigint` | NO |  | PK |  |
+| 2 | `id` | `bigint` | YES |  |  |  |
+| 3 | `axe` | `text` | YES |  |  |  |
+| 4 | `cumuld` | `bigint` | YES |  |  |  |
+| 5 | `cumulf` | `bigint` | YES |  |  |  |
+| 6 | `geom` | `geometry(LineStringM,2154)` | YES |  |  |  |
+| 7 | `nb_pl` | `double precision` | YES |  |  |  |
+| 8 | `nature_cr` | `text` | YES |  |  |  |
+| 9 | `nb_pl_final` | `double precision` | YES |  |  |  |
+| 10 | `nature_cr_final` | `character varying(254)` | YES |  |  |  |
+| 11 | `plod` | `character varying(254)` | YES |  |  |  |
+| 12 | `absd` | `bigint` | YES |  |  |  |
+| 13 | `plof` | `character varying(254)` | YES |  |  |  |
+| 14 | `absf` | `bigint` | YES |  |  |  |
+| 15 | `len_shp` | `numeric` | YES |  |  |  |
+| 16 | `len_cumul` | `bigint` | YES |  |  |  |
+
+**Indexes**
+
+| Name | Unique | Primary | Definition |
+|---|:---:|:---:|---|
+| `troncon_client_pkey` | YES | YES | `CREATE UNIQUE INDEX troncon_client_pkey ON client.troncon_client USING btree (id_tronc)` |
+
 ## Schema `public` <a id="schema-public"></a>
 
 | Table | Rows (est.) | Size | Description |
 |---|---:|---:|---|
-| [`image`](#tbl-public-image) | 12,378 | 4.6 MB |  |
-| [`road_data`](#tbl-public-road_data) | 69,781 | 72.6 MB |  |
-| [`session`](#tbl-public-session) | 14 | 552.0 KB |  |
+| [`image`](#tbl-public-image) | 12,378 | 54.1 MB |  |
+| [`road_data`](#tbl-public-road_data) | 69,781 | 140.8 MB |  |
+| [`session`](#tbl-public-session) | 14 | 896.0 KB |  |
 
 ### `public.image` <a id="tbl-public-image"></a>
 
 **Description:** _(add via db_descriptions.yaml)_
 
-- Row estimate: **12,378**  - Size: **4.6 MB**
+- Row estimate: **12,378**  - Size: **54.1 MB**
 
 **Columns**
 
@@ -311,6 +345,44 @@ _Add a description of the database and its use case in_ `db_descriptions.yaml` _
 | 17 | `updated_by_id` | `text` | YES |  |  |  |
 | 18 | `road_cumul` | `double precision` | YES |  |  |  |
 | 19 | `road_id` | `uuid` | YES |  |  |  |
+| 20 | `id_tronc` | `bigint` | YES |  |  |  |
+| 21 | `axe` | `text` | YES |  |  |  |
+| 22 | `prj_quality` | `numeric` | YES |  |  |  |
+| 23 | `cumuld` | `numeric` | YES |  |  |  |
+| 24 | `geom_prj` | `geometry(Point,2154)` | YES |  |  |  |
+| 25 | `ln_prj` | `geometry(LineString,2154)` | YES |  |  |  |
+| 26 | `seg_ss` | `geometry(LineString,2154)` | YES |  |  |  |
+| 27 | `seg_prj` | `geometry(LineString,2154)` | YES |  |  |  |
+| 28 | `d_angle_seg` | `numeric` | YES |  |  |  |
+| 29 | `Note_AFFAISSEMENT_SIGNIFICATIF` | `numeric` | YES |  |  |  |
+| 30 | `Note_AFFAISSEMENT_GRAVE` | `numeric` | YES |  |  |  |
+| 31 | `Note_ARRACHEMENT_SURFACE` | `numeric` | YES |  |  |  |
+| 32 | `Note_ARRACHEMENT_PROFOND` | `numeric` | YES |  |  |  |
+| 33 | `Note_AUTRE` | `numeric` | YES |  |  |  |
+| 34 | `Note_JOINT_LONGITUDINAL` | `numeric` | YES |  |  |  |
+| 35 | `Note_JOINT_TRANSVERSAL` | `numeric` | YES |  |  |  |
+| 36 | `Note_NID_DE_POULE` | `numeric` | YES |  |  |  |
+| 37 | `Note_ORNIERAGE_SIGNIFICATIF` | `numeric` | YES |  |  |  |
+| 38 | `Note_ORNIERAGE_GRAVE` | `numeric` | YES |  |  |  |
+| 39 | `Note_REGARD` | `numeric` | YES |  |  |  |
+| 40 | `Note_TAMPON` | `numeric` | YES |  |  |  |
+| 41 | `Note_FAIENCAGE_SIGNIFICATIF` | `numeric` | YES |  |  |  |
+| 42 | `Note_FAIENCAGE_GRAVE` | `numeric` | YES |  |  |  |
+| 43 | `Note_FAIENCAGE_BDR` | `numeric` | YES |  |  |  |
+| 44 | `Note_FISSURE_LONGITUDINALE_SIGNIFICATIVE` | `numeric` | YES |  |  |  |
+| 45 | `Note_FISSURE_LONGITUDINALE_GRAVE` | `numeric` | YES |  |  |  |
+| 46 | `Note_FISSURE_LONGITUDINALE_BDR` | `numeric` | YES |  |  |  |
+| 47 | `Note_FISSURE_LONGITUDINALE_PONTEE` | `numeric` | YES |  |  |  |
+| 48 | `Note_FISSURE_TRANSVERSALE_SIGNIFICATIVE` | `numeric` | YES |  |  |  |
+| 49 | `Note_FISSURE_TRANSVERSALE_GRAVE` | `numeric` | YES |  |  |  |
+| 50 | `Note_FISSURE_TRANSVERSALE_PONTEE` | `numeric` | YES |  |  |  |
+| 51 | `Note_GLACAGE_RESSUAGE_LOCALISE` | `numeric` | YES |  |  |  |
+| 52 | `Note_GLACAGE_RESSUAGE_GENERALISE` | `numeric` | YES |  |  |  |
+| 53 | `Note_REPARATION_PETITE_LARGEUR` | `numeric` | YES |  |  |  |
+| 54 | `Note_REPARATION_PLEINE_LARGEUR` | `numeric` | YES |  |  |  |
+| 55 | `Note_Structure` | `numeric` | YES |  |  |  |
+| 56 | `Note_Surface` | `numeric` | YES |  |  |  |
+| 57 | `geom_visible` | `geometry(Polygon,2154)` | YES |  |  |  |
 
 **Indexes**
 
@@ -322,7 +394,7 @@ _Add a description of the database and its use case in_ `db_descriptions.yaml` _
 
 **Description:** _(add via db_descriptions.yaml)_
 
-- Row estimate: **69,781**  - Size: **72.6 MB**
+- Row estimate: **69,781**  - Size: **140.8 MB**
 
 **Columns**
 
@@ -340,6 +412,8 @@ _Add a description of the database and its use case in_ `db_descriptions.yaml` _
 | 10 | `pixels_coords` | `text` | YES |  |  |  |
 | 11 | `filename` | `text` | YES |  |  |  |
 | 12 | `geom` | `geometry` | YES |  |  |  |
+| 13 | `reliability` | `double precision` | YES |  |  |  |
+| 14 | `measure_width` | `double precision` | YES |  |  |  |
 
 **Indexes**
 
@@ -351,7 +425,7 @@ _Add a description of the database and its use case in_ `db_descriptions.yaml` _
 
 **Description:** _(add via db_descriptions.yaml)_
 
-- Row estimate: **14**  - Size: **552.0 KB**
+- Row estimate: **14**  - Size: **896.0 KB**
 
 **Columns**
 
