@@ -1,0 +1,39 @@
+# PostgreSQL  Database  Configuration
+
+
+
+# Database Connection
+source:
+  host: "localhost"
+  port: 5433
+  user: "postgres"
+  password: "diagway"
+  database: "cd48_demo"
+  original_schema: "fromrcweb"
+  client_schema: "client"
+  processing_schema: "public"
+  reporting_schema: "rendu"
+
+# Processing-step parameters
+processing:
+  geom_visible:
+    buffer_width: 6.0      # meters; perpendicular half-width of the visible band
+    segment_length: 25.0   # meters; along-session length of the segment starting at the image
+
+# Export HTML viewer (scripts/03_step3_export.py --html)
+html:
+  # SVG / PNG / JPEG embedded in the viewer's sidebar header.
+  # Path is resolved relative to the project root.
+  # Leave empty (or comment out) to hide the logo.
+  logo_path: "img/Roadcare_Logotype_Digital_Couleurs.svg"
+  # Minimum Leaflet zoom level at which the per-feature labels on
+  # pas_100 / pas_1000 polygons appear. Below this zoom they are
+  # hidden to avoid clutter. Common values: 16, 17, 18, 19.
+  pas_label_zoom_min: 17
+  # Base map tile provider. Default = tile.openstreetmap.de — same
+  # osm-carto rendering as openstreetmap.org but no Referer 403 when
+  # the HTML is opened from file://.
+  tile_url: "https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png"
+  tile_attribution: "&copy; OpenStreetMap"
+  tile_subdomains: "abc"
+

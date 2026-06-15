@@ -1,0 +1,68 @@
+# Project-specific files
+claude.md
+task*.md
+task.md
+*logs.txt
+*_task.md
+todo.md
+export_from_grading_database.sql
+export_from_roadcare_database.sql
+.claude/
+
+# Environment variables
+.env
+
+# Configuration with secrets (use example_config.yaml as template)
+config/config.yaml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+export/
+
+# Jupyter Notebook
+.ipynb_checkpoints
