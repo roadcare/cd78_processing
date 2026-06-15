@@ -6,24 +6,24 @@ _database:
   description: ''
 client:
   20250916_trafic:
-    description: 'information about traffic on the road network'
+    description: information about traffic on the road network
     columns:
       id: ''
-      geom: 'geometry of the traffic measurement segments'
-      axe: 'name of axe, id of the road in linear referencing system'
-      cumuld: 'cumulative distance along the axe for the start of the segment (m value in LRS)'
-      cumulf: 'cumulative distance along the axe for the end of the segment (m value in LRS)'
-      plod: 'position of the start of the segment (m value in LRS)'
-      absd: 'absolute distance from the start of the axe for the start of the segment (m value in LRS)'
-      plof: 'position of the end of the segment (m value in LRS)'
-      absf: 'absolute distance from the start of the axe for the end of the segment (m value in LRS)'
-      xd: 'longitude value of the start of the segment'
-      yd: 'latitude value of the start of the segment'
-      zd: 'elevation value of the start of the segment'
-      xf: 'longitude value of the end of the segment'
-      yf: 'latitude value of the end of the segment'
-      zf: 'elevation value of the end of the segment'
-      date_modif: 'date of the last modification of the traffic measurement segment'
+      geom: geometry of the traffic measurement segments
+      axe: name of axe, id of the road in linear referencing system
+      cumuld: cumulative distance along the axe for the start of the segment (m value in LRS)
+      cumulf: cumulative distance along the axe for the end of the segment (m value in LRS)
+      plod: position of the start of the segment (m value in LRS)
+      absd: absolute distance from the start of the axe for the start of the segment (m value in LRS)
+      plof: position of the end of the segment (m value in LRS)
+      absf: absolute distance from the start of the axe for the end of the segment (m value in LRS)
+      xd: longitude value of the start of the segment
+      yd: latitude value of the start of the segment
+      zd: elevation value of the start of the segment
+      xf: longitude value of the end of the segment
+      yf: latitude value of the end of the segment
+      zf: elevation value of the end of the segment
+      date_modif: date of the last modification of the traffic measurement segment
       num_sect: ''
       tmja: ''
       p100_pl: ''
@@ -47,22 +47,100 @@ client:
       h_hpm_s2: ''
       hps_sens2: ''
       h_hps_s2: ''
+  20250916_trafic_most_recent:
+    description: ''
+    columns:
+      source_id: ''
+      geom: ''
+      axe: ''
+      cumuld: ''
+      cumulf: ''
+      plod: ''
+      absd: ''
+      plof: ''
+      absf: ''
+      xd: ''
+      yd: ''
+      zd: ''
+      xf: ''
+      yf: ''
+      zf: ''
+      date_modif: ''
+      num_sect: ''
+      tmja: ''
+      p100_pl: ''
+      annee: ''
+      nb_pl: ''
+      sens1_de: ''
+      sens1_vers: ''
+      sens2_de: ''
+      sens2_vers: ''
+      tmja_sens1: ''
+      tmja_sens2: ''
+      tmja_sens3: ''
+      tmjo_sens1: ''
+      tmjo_sens2: ''
+      tmjo_sens3: ''
+      hpm_sens1: ''
+      h_hpm_s1: ''
+      hps_sens1: ''
+      h_hps_s1: ''
+      hpm_sens2: ''
+      h_hpm_s2: ''
+      hps_sens2: ''
+      h_hps_s2: ''
+      id: ''
+      is_overlapping: ''
   20260227_couche_roulement:
-    description: 'information about the road surface / pavement type on the road network'
+    description: information about the road surface / pavement type on the road network
     columns:
       id: ''
-      geom: 'geometry of the road surface segments'
-      axe: 'name of axe, id of the road in linear referencing system'
-      cumuld: 'cumulative distance along the axe for the start of the segment (m value in LRS)'
-      cumulf: 'cumulative distance along the axe for the end of the segment (m value in LRS)'
-      plod: 'position of the start of the segment (m value in LRS)'
-      absd: 'absolute distance from the start of the axe for the start of the segment (m value in LRS)'
-      plof: 'position of the end of the segment (m value in LRS)'
-      absf: 'absolute distance from the start of the axe for the end of the segment (m value in LRS)'
+      geom: geometry of the road surface segments
+      axe: name of axe, id of the road in linear referencing system
+      cumuld: cumulative distance along the axe for the start of the segment (m value in LRS)
+      cumulf: cumulative distance along the axe for the end of the segment (m value in LRS)
+      plod: position of the start of the segment (m value in LRS)
+      absd: absolute distance from the start of the axe for the start of the segment (m value in LRS)
+      plof: position of the end of the segment (m value in LRS)
+      absf: absolute distance from the start of the axe for the end of the segment (m value in LRS)
       subdivisio: ''
       generation: ''
-      annee: 'year of the last modification of the road surface segment'
-      nature_cr: 'nature of the road surface / pavement type (e.g., asphalt, concrete, gravel)'
+      annee: year of the last modification of the road surface segment
+      nature_cr: nature of the road surface / pavement type (e.g., asphalt, concrete, gravel)
+  20260227_couche_roulement_most_recent:
+    description: ''
+    columns:
+      source_id: ''
+      geom: ''
+      axe: ''
+      cumuld: ''
+      cumulf: ''
+      plod: ''
+      absd: ''
+      plof: ''
+      absf: ''
+      subdivisio: ''
+      generation: ''
+      annee: ''
+      nature_cr: ''
+      id: ''
+      is_overlapping: ''
+  20260301_trafic_couche_roulement_intersection:
+    description: ''
+    columns:
+      id: ''
+      axe: ''
+      cumuld: ''
+      cumulf: ''
+      geom: ''
+      nb_pl: ''
+      nature_cr: ''
+      nb_pl_final: ''
+      nature_cr_final: ''
+      plod: ''
+      absd: ''
+      plof: ''
+      absf: ''
   itineraires_v2:
     description: ''
     columns:
@@ -82,5 +160,64 @@ client:
       m_ref_f: ''
       loc_error: ''
       shape_length: ''
-public: {}
+public:
+  image:
+    description: ''
+    columns:
+      id: ''
+      geom: ''
+      geomCalibration: ''
+      cumulStartSession: ''
+      cumulEndSession: ''
+      prIdStart: ''
+      prDistanceStart: ''
+      captureDate: ''
+      filename: ''
+      url: ''
+      elapsedTime: ''
+      sessionId: ''
+      index: ''
+      created_at: ''
+      updated_at: ''
+      created_by_id: ''
+      updated_by_id: ''
+      road_cumul: ''
+      road_id: ''
+  road_data:
+    description: ''
+    columns:
+      id: ''
+      sessionName: ''
+      sessionId: ''
+      classe: ''
+      sous_classe: ''
+      cumuld: ''
+      cumulf: ''
+      image_id: ''
+      comment: ''
+      pixels_coords: ''
+      filename: ''
+      geom: ''
+  session:
+    description: ''
+    columns:
+      id: ''
+      organizationId: ''
+      geom: ''
+      geomCalibration: ''
+      surfaceGrade: ''
+      structuralGrade: ''
+      calibrationId: ''
+      calibrationError: ''
+      calibrationErrorMailSent: ''
+      calibrationDone: ''
+      videoToImagesDone: ''
+      metadataId: ''
+      name: ''
+      created_at: ''
+      updated_at: ''
+      created_by_id: ''
+      updated_by_id: ''
+      state: ''
+      acquisition_date: ''
 rendu: {}

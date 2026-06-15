@@ -342,6 +342,43 @@ def build_clip_geom(
              collist=collist, sel=sel, diff=diff)
 
 
+PR_COLS = ("plod", "absd", "plof", "absf")
+
+
+def build_update_pr(
+    src: sql.Composed, out: sql.Composed, axe_col: str, cumuld_col: str,
+    cumulf_col: str, plod="plod", absd="absd", plof="plof", absf="absf",
+) -> sql.Composed:
+    """Recompute the PR reference columns (``plod``/``absd`` at ``cumuld`` and
+    ``plof``/``absf`` at ``cumulf``) from an anchor map of every source segment
+    endpoint. Each output boundary is a source endpoint, so the lookup is exact;
+    where it is missing the existing value is kept."""
+    A = sql.Identifier(axe_col)
+    CD, CF = sql.Identifier(cumuld_col), sql.Identifier(cumulf_col)
+    PLOD, ABSD = sql.Identifier(plod), sql.Identifier(absd)
+    PLOF, ABSF = sql.Identifier(plof), sql.Identifier(absf)
+    return sql.SQL(
+        """
+        WITH anchors AS (
+            SELECT DISTINCT ON (axe, cml) axe, cml, plo, abs
+            FROM (
+                SELECT {A} AS axe, {CD} AS cml, {PLOD} AS plo, {ABSD} AS abs FROM {src}
+                UNION ALL
+                SELECT {A},       {CF},        {PLOF},        {ABSF}        FROM {src}
+            ) u
+            WHERE plo IS NOT NULL
+            ORDER BY axe, cml, plo, abs
+        )
+        UPDATE {out} o SET
+            {PLOD} = COALESCE((SELECT plo FROM anchors a WHERE a.axe = o.{A} AND a.cml = o.{CD}), o.{PLOD}),
+            {ABSD} = COALESCE((SELECT abs FROM anchors a WHERE a.axe = o.{A} AND a.cml = o.{CD}), o.{ABSD}),
+            {PLOF} = COALESCE((SELECT plo FROM anchors a WHERE a.axe = o.{A} AND a.cml = o.{CF}), o.{PLOF}),
+            {ABSF} = COALESCE((SELECT abs FROM anchors a WHERE a.axe = o.{A} AND a.cml = o.{CF}), o.{ABSF})
+        """
+    ).format(src=src, out=out, A=A, CD=CD, CF=CF,
+             PLOD=PLOD, ABSD=ABSD, PLOF=PLOF, ABSF=ABSF)
+
+
 def build_copy_unchanged(
     src: sql.Composed, out: sql.Composed, columns: list[str], id_col: str,
     *, flag: bool,
@@ -522,12 +559,27 @@ def main(argv: list[str] | None = None) -> int:
                                             "pids": sorted(geom_partners)})
                 inserted += cur.rowcount
 
+            # Recompute PR references (plod/absd/plof/absf) for the (possibly
+            # clipped) cumuld/cumulf of every output row, from the source's
+            # endpoint anchor map.
+            pr_updated = None
+            if all(col in columns for col in PR_COLS):
+                cur.execute(build_update_pr(
+                    src_ident, out_ident, args.axe_col, args.cumuld_col,
+                    args.cumulf_col))
+                pr_updated = cur.rowcount
+            else:
+                print(f"  PR cols {PR_COLS} not all present; skipped PR update.",
+                      file=sys.stderr)
+
             cur.execute(
                 sql.SQL("SELECT COUNT(*) AS n FROM {out}").format(out=out_ident))
             total = cur.fetchone()[0]
 
         conn.commit()
         print(f"  inserted rows:    {inserted}", file=sys.stderr)
+        if pr_updated is not None:
+            print(f"  PR rows updated:  {pr_updated}", file=sys.stderr)
         print(f"  output total:     {total}", file=sys.stderr)
         print("Done.", file=sys.stderr)
     finally:

@@ -56,6 +56,18 @@ with `CREATE TABLE ... (LIKE src)` (columns/types/NOT NULL only), the source
 `id` is renamed to `source_id`, and a brand-new generated `id` becomes the
 unique PRIMARY KEY. `source_id` ties each output row back to its origin.
 
+### PR reference columns
+
+After clipping, the PR reference columns `plod`/`absd` (at `cumuld`) and
+`plof`/`absf` (at `cumulf`) are recomputed for every row so they match the
+(possibly clipped) endpoints. An **anchor map** is built from every source
+segment endpoint — `(axe, cumuld) → (plod, absd)` and `(axe, cumulf) →
+(plof, absf)` — and each output endpoint is looked up exactly (every clip
+boundary is itself a source endpoint, so no interpolation is needed; on the
+rare conflicting anchor a deterministic pick is made, and a missing anchor
+leaves the existing value untouched). Skipped with a message if the four
+columns are not all present.
+
 ---
 
 ## Config keys used
