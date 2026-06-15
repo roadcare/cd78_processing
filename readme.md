@@ -23,6 +23,7 @@ for a template.
 | `scripts/03_take_most_recent_segment.py` | De-overlap a layer keeping the most recent segment → `<table>_most_recent` table with an `is_overlapping` flag. | [03_take_most_recent_segment.md](scripts/03_take_most_recent_segment.md) |
 | `scripts/04_make_finest_overlay.py` | Finest linear-referencing overlay of ≥2 layers → one row per `(axe, cumuld, cumulf, value₁, value₂, …)` composition. | [04_make_finest_overlay.md](scripts/04_make_finest_overlay.md) |
 | `scripts/05_build_troncon.py` | Decompose the overlay into individual M-calibrated `LineStringM` troncons → `client.troncon_client` (`id_tronc` PK, SRID 2154). | [05_build_troncon.md](scripts/05_build_troncon.md) |
+| `scripts/11_map_matching.py` | Map-match `public.image` points onto `client.troncon_client` → sets `id_tronc`, `axe`, `cumuld`, projection geometry. | [11_map_matching.md](scripts/11_map_matching.md) |
 
 ## Key files
 
