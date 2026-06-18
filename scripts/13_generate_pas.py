@@ -1,4 +1,4 @@
-"""Step 0.6 — generate fixed-step road segments (``pas``) from troncon_client.
+"""Step 1.3 — generate fixed-step road segments (``pas``) from troncon_client.
 
 For the part of ``client.troncon_client`` that lies on an itinerary
 (``client.itineraires_v2``), this builds ``client.pas_50`` (50 m steps) and
@@ -21,8 +21,8 @@ Each output row is a fixed-length slice of one troncon:
 
 Usage
 -----
-    python scripts/06_generate_pas.py
-    python scripts/06_generate_pas.py --tol 15 --dry-run
+    python scripts/13_generate_pas.py
+    python scripts/13_generate_pas.py --tol 15 --dry-run
 """
 
 from __future__ import annotations
@@ -131,7 +131,7 @@ def build_create(out: sql.Composed, step: float, tol: float) -> sql.Composed:
         WHERE geom_line IS NOT NULL
         """
     ).format(out=out, srid=sql.Literal(TARGET_SRID), largeur=largeur,
-             avg_global=avg_note("note_globale"),
+             avg_global=avg_note("Note_Global"),
              avg_struct=avg_note("Note_Structure"),
              avg_surface=avg_note("Note_Surface"))
 

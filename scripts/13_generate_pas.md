@@ -1,6 +1,6 @@
-# `06_generate_pas.py`
+# `13_generate_pas.py`
 
-Step 0.6 — builds fixed-step road segments (*pas*) from `client.troncon_client`,
+Step 1.3 — builds fixed-step road segments (*pas*) from `client.troncon_client`,
 restricted to the part that lies on an itinerary (`client.itineraires_v2`):
 
 - **`client.pas_50`** — 50 m steps
@@ -43,8 +43,8 @@ Columns (both tables): `id` (PK), `id_tronc`, `axe`, `cumuld`, `cumulf`,
 ## Usage
 
 ```bash
-python scripts/06_generate_pas.py            # builds pas_50 and pas_100
-python scripts/06_generate_pas.py --tol 15 --dry-run
+python scripts/13_generate_pas.py            # builds pas_50 and pas_100
+python scripts/13_generate_pas.py --tol 15 --dry-run
 ```
 
 | Flag | Default | Description |

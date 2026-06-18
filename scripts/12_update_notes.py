@@ -18,9 +18,9 @@ Rules
   ``public.road_data`` rows of ``classe = 'Largeur'`` (averaged per image, since
   a few images carry several width measurements), matched on
   ``image.id = road_data.image_id``.
-- ``note_globale`` (numeric) is added and filled from
-  ``image_grade."aggregateGrade"`` (matched on ``image.id =
-  image_grade."imageId"::uuid``); null ⇒ 1.0.
+- ``Note_Global`` (numeric) is added and set to
+  ``LEAST(Note_Structure, Note_Surface)`` (computed after the composite update);
+  the old lowercase ``note_globale`` column is dropped.
 
 Usage
 -----
@@ -88,22 +88,22 @@ STRUCTURE = [
     ("Note_FISSURE_TRANSVERSALE_PONTEE", 0.1),
     ("Note_REPARATION_PETITE_LARGEUR", 0.1),
     ("Note_REPARATION_PLEINE_LARGEUR", 0.1),
-]
-SURFACE = [
-    ("Note_ARRACHEMENT_SURFACE", 0.1),
-    ("Note_ARRACHEMENT_PROFOND", 0.5),
     ("Note_JOINT_LONGITUDINAL", 0.1),
     ("Note_JOINT_TRANSVERSAL", 0.1),
+    ("Note_FISSURE_TRANSVERSALE_SIGNIFICATIVE", 0.8),
+    ("Note_FISSURE_LONGITUDINALE_SIGNIFICATIVE", 0.2),
+]
+SURFACE = [
+    ("Note_ARRACHEMENT_SURFACE", 0.7),
+    ("Note_ARRACHEMENT_PROFOND", 0.9),
     ("Note_NID_DE_POULE", 1.0),
     ("Note_FAIENCAGE_SIGNIFICATIF", 1.0),
     ("Note_FAIENCAGE_GRAVE", 1.0),
-    ("Note_FAIENCAGE_BDR", 1.0),
     ("Note_FISSURE_LONGITUDINALE_SIGNIFICATIVE", 0.8),
     ("Note_FISSURE_LONGITUDINALE_GRAVE", 1.0),
-    ("Note_FISSURE_LONGITUDINALE_BDR", 1.0),
-    ("Note_FISSURE_TRANSVERSALE_SIGNIFICATIVE", 0.8),
-    ("Note_GLACAGE_RESSUAGE_LOCALISE", 0.1),
-    ("Note_GLACAGE_RESSUAGE_GENERALISE", 0.1),
+    ("Note_FISSURE_TRANSVERSALE_SIGNIFICATIVE", 0.2),
+    ("Note_GLACAGE_RESSUAGE_LOCALISE", 0.2),
+    ("Note_GLACAGE_RESSUAGE_GENERALISE", 0.2),
 ]
 
 
@@ -188,22 +188,18 @@ def build_statements() -> dict[str, list[sql.Composed] | sql.Composed]:
         """
     ).format(img=img)
 
-    # note_globale: the image_grade aggregate grade (null ⇒ 1.0), matched on
-    # image.id = image_grade."imageId"::uuid.
+    # Note_Global = LEAST(Note_Structure, Note_Surface). Runs after the
+    # composite update so both inputs are populated. Replaces the old
+    # lowercase ``note_globale`` column.
     add_globale = sql.SQL(
-        "ALTER TABLE {img} ADD COLUMN IF NOT EXISTS note_globale numeric"
-    ).format(img=img)
+        "ALTER TABLE {img} DROP COLUMN IF EXISTS note_globale, "
+        "ADD COLUMN IF NOT EXISTS {c} numeric"
+    ).format(img=img, c=sql.Identifier("Note_Global"))
     update_globale = sql.SQL(
-        """
-        UPDATE {img} t1 SET note_globale = COALESCE(s.ag, 1.0)
-        FROM (
-            SELECT i.id, g."aggregateGrade" AS ag
-            FROM {img} i
-            LEFT JOIN {grade} g ON i.id = g."imageId"::uuid
-        ) s
-        WHERE t1.id = s.id
-        """
-    ).format(img=img, grade=grade)
+        "UPDATE {img} SET {c} = LEAST({st}, {su})"
+    ).format(img=img, c=sql.Identifier("Note_Global"),
+             st=sql.Identifier("Note_Structure"),
+             su=sql.Identifier("Note_Surface"))
 
     return {"add_notes": add_notes, "update_notes": update_notes,
             "add_composite": add_composite, "update_composite": update_composite,
@@ -267,7 +263,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  Note_* columns updated: {n_notes} images", file=sys.stderr)
         print(f"  Note_Structure/Surface: {n_comp} images", file=sys.stderr)
         print(f"  measure_width updated:  {n_width} images", file=sys.stderr)
-        print(f"  note_globale updated:   {n_glob} images", file=sys.stderr)
+        print(f"  Note_Global updated:    {n_glob} images", file=sys.stderr)
         print("Done.", file=sys.stderr)
     finally:
         conn.close()

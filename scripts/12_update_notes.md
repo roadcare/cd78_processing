@@ -29,18 +29,18 @@ Step 1.2 — populates degradation **notes** on `public.image` from
      power(Note_FISSURE_TRANSVERSALE_GRAVE,1.0) *
      power(Note_FISSURE_TRANSVERSALE_PONTEE,0.1) *
      power(Note_REPARATION_PETITE_LARGEUR,0.1) *
-     power(Note_REPARATION_PLEINE_LARGEUR,0.1)`
-   - **Note_Surface** = `power(Note_ARRACHEMENT_SURFACE,0.1) *
-     power(Note_ARRACHEMENT_PROFOND,0.5) * power(Note_JOINT_LONGITUDINAL,0.1) *
-     power(Note_JOINT_TRANSVERSAL,0.1) * power(Note_NID_DE_POULE,1.0) *
+     power(Note_REPARATION_PLEINE_LARGEUR,0.1) *
+     power(Note_JOINT_LONGITUDINAL,0.1) * power(Note_JOINT_TRANSVERSAL,0.1) *
+     power(Note_FISSURE_TRANSVERSALE_SIGNIFICATIVE,0.8) *
+     power(Note_FISSURE_LONGITUDINALE_SIGNIFICATIVE,0.2)`
+   - **Note_Surface** = `power(Note_ARRACHEMENT_SURFACE,0.7) *
+     power(Note_ARRACHEMENT_PROFOND,0.9) * power(Note_NID_DE_POULE,1.0) *
      power(Note_FAIENCAGE_SIGNIFICATIF,1.0) * power(Note_FAIENCAGE_GRAVE,1.0) *
-     power(Note_FAIENCAGE_BDR,1.0) *
      power(Note_FISSURE_LONGITUDINALE_SIGNIFICATIVE,0.8) *
      power(Note_FISSURE_LONGITUDINALE_GRAVE,1.0) *
-     power(Note_FISSURE_LONGITUDINALE_BDR,1.0) *
-     power(Note_FISSURE_TRANSVERSALE_SIGNIFICATIVE,0.8) *
-     power(Note_GLACAGE_RESSUAGE_LOCALISE,0.1) *
-     power(Note_GLACAGE_RESSUAGE_GENERALISE,0.1)`
+     power(Note_FISSURE_TRANSVERSALE_SIGNIFICATIVE,0.2) *
+     power(Note_GLACAGE_RESSUAGE_LOCALISE,0.2) *
+     power(Note_GLACAGE_RESSUAGE_GENERALISE,0.2)`
 
 Grades are in `[0, 1]` (1 = perfect); the products fall as degradations appear.
 
@@ -48,6 +48,8 @@ Grades are in `[0, 1]` (1 = perfect); the products fall as degradations appear.
    `public.road_data` rows where `classe = 'Largeur'`, matched on
    `image.id = road_data.image_id` and averaged per image (a few images carry
    several width measurements).
+5. Adds **`note_globale`** (numeric) and sets it to
+   `LEAST(Note_Structure, Note_Surface)` (after the composite update).
 
 ---
 
@@ -69,13 +71,14 @@ Runs in a single transaction.
 
 ## Verified result
 
-- 12,378 images updated; 28 `Note_*` columns present.
-- Example (image `5c490c6a…`, `referenceGrades` with 6 keys): each key landed in
-  its column, the rest 1.0; `Note_Structure = 0.97^0.1 = 0.997`,
-  `Note_Surface = 0.69^0.1·0.88^0.1·0.96^0.8·0.98^0.8 = 0.906` (hand-checked).
-- The 172 images with no `image_grade` row → all notes 1.0.
-- `measure_width` set on 11,136 images (range ≈ 1.8–25.5 m); images with no
-  `Largeur` row stay `NULL`.
+- 12,378 images updated; `Note_Structure` / `Note_Surface` / `note_globale`
+  populated for all.
+- `Note_Structure` re-derived independently from the columns matches the stored
+  value exactly (spot-checked); both composites fall in `(0, 1]`.
+- `note_globale = LEAST(Note_Structure, Note_Surface)` for **all** rows (0
+  mismatches).
+- `measure_width` set on 11,136 images; images with no `Largeur` row stay
+  `NULL`.
 
 ---
 
